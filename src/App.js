@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Container, ImageList, ImageListItem } from "@mui/material";
+
 import logo from "./logo.svg";
 import "./App.css";
 
@@ -23,18 +25,23 @@ function App() {
   ]);
 
   return (
-    <>
+    <Container>
       <h1>state photo</h1>
-      <ul>
-        {photos.map((item) => {
+      <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+        {photos.map((item, index) => {
           return (
-            <li>
-              <img src={item.img} alt={item.alt} width="300px" />
-            </li>
+            <ImageListItem key={index}>
+              <img
+                src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                alt={item.alt}
+                loading="lazy"
+              />
+            </ImageListItem>
           );
         })}
-      </ul>
-    </>
+      </ImageList>
+    </Container>
   );
 }
 
