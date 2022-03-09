@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useReducer } from "react";
 
 import { Container, Modal, Box, Typography } from "@mui/material";
-import List from "./List";
+import styled from "styled-components";
 
-import logo from "./logo.svg";
+import type { Photo } from "./type";
+import List from "./List";
+import { usePhotosRedux } from "./hooks/usePhotosRedux";
+
+// import logo from "./logo.svg";
 import "./App.css";
 
 const style = {
@@ -18,8 +22,26 @@ const style = {
   p: 4,
 };
 
-function App() {
-  const [photos, setPhotos] = useState([
+const BoxWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+const PhotoButton = styled.div`
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  font-size: 1.5em;
+  :hover {
+    background-color: #c0c0c0;
+    cursor: pointer;
+  }
+`;
+
+function App(): JSX.Element {
+  const photos: Photo[] = [
     {
       img: "./img/norway-g4be0bf754_640.jpg",
       title: "norway",
@@ -86,17 +108,18 @@ function App() {
         </>
       ),
     },
-  ]);
+  ];
+  const [showModal, setShowModal] = useState<boolean>(false);
 
-  const [showModal, setShowModal] = useState(false);
-  const [indexModal, setIndexModal] = useState(null);
+  const { photosIndex, dispatchSubstitution, dispatchPrev, dispatchNext } =
+    usePhotosRedux(photos.length);
 
-  const openModal = (index) => {
-    setIndexModal(index);
+  const openModal = (index: number): void => {
+    dispatchSubstitution(index);
     setShowModal(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setShowModal((prevShowModal) => !prevShowModal);
   };
 
@@ -111,9 +134,18 @@ function App() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <p>{photos[indexModal]?.title}</p>
-          <img src={photos[indexModal]?.img} alt={photos[indexModal]?.title} />
-          <p>{photos[indexModal]?.description}</p>
+          <BoxWrapper>
+            <PhotoButton onClick={dispatchPrev}>&lt;</PhotoButton>
+            <div>
+              <p>{photos[photosIndex]?.title}</p>
+              <img
+                src={photos[photosIndex]?.img}
+                alt={photos[photosIndex]?.title}
+              />
+              <p>{photos[photosIndex]?.description}</p>
+            </div>
+            <PhotoButton onClick={dispatchNext}>&gt;</PhotoButton>
+          </BoxWrapper>
         </Box>
       </Modal>
     </Container>

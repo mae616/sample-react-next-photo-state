@@ -2,7 +2,21 @@ import { nanoid } from "nanoid";
 
 import { ImageListItem } from "@mui/material";
 
-function Item({ item, index, openModal }) {
+import type { Photo, OpenModalFunction } from "./type";
+
+function Item({
+  item,
+  index,
+  openModal,
+}: {
+  item: Photo;
+  index: number;
+  openModal: OpenModalFunction;
+}): JSX.Element {
+  const handleClick = (): void => {
+    openModal(index);
+  };
+
   return (
     <ImageListItem key={nanoid()}>
       <img
@@ -10,7 +24,7 @@ function Item({ item, index, openModal }) {
         srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
         alt={item.title}
         loading="lazy"
-        onClick={openModal.bind(this, index)}
+        onClick={handleClick}
       />
     </ImageListItem>
   );
